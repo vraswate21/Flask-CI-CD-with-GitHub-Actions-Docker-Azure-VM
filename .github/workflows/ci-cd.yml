@@ -33,7 +33,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOCKEN }}
 
       - name: docker build and push
-        uses: |
+        script: |
           docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/flask-azure-vm:latest .
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/flask-azure-vm:latest
 
