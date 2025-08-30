@@ -35,7 +35,7 @@ jobs:
       - name: docker build and push
         uses: |
           docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/flask-azure-vm:latest .
-        docker push ${{ secrets.DOCKERHUB_USERNAME }}/flask-azure-vm:latest
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/flask-azure-vm:latest
 
       - name: deploy to azure VM ssh
         uses: appleboy/ssh-action@1.0.3
