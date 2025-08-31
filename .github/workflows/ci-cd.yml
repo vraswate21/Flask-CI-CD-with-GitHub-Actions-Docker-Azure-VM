@@ -1,6 +1,5 @@
 name: ci/cd pipeline
 
-
 on:
   push:
     branches: [ "main" ]
@@ -12,33 +11,33 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: checkout code
+      - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: set up python
+      - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: "3.10"
 
-      - name: install dependencies
+      - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: run tests
+      - name: Run tests
         run: pytest
 
       - name: Docker Login
         uses: docker/login-action@v2
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }} 
-          password: ${{ secrets.DOCKERHUB_TOCKEN }}
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: docker build and push
-        script: |
+      - name: Build and Push Docker Image
+        run: |
           docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/flask-azure-vm:latest .
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/flask-azure-vm:latest
 
-      - name: deploy to azure VM ssh
-        uses: appleboy/ssh-action@1.0.3
+      - name: Deploy to Azure VM via SSH
+        uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.AZURE_VM_IP }}
           username: ${{ secrets.AZURE_VM_USER }}
@@ -47,10 +46,5 @@ jobs:
             sudo docker stop flaskapp || true
             sudo docker rm flaskapp || true
             sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/flask-azure-vm:latest
-
             sudo docker run -d -p 80:5000 --name flaskapp ${{ secrets.DOCKERHUB_USERNAME }}/flask-azure-vm:latest
-
-
-
-
 
